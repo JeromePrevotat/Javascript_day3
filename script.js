@@ -12,8 +12,11 @@ const taskProjectInputContainer = document.getElementById('taskProjectInputConta
 const taskProjectInput = document.getElementById('taskProjectInput');
 const addTaskButton = document.getElementById('addTaskButton');
 const displayTaskTableBody = document.getElementById('displayTaskTableBody');
+const filterInput = document.getElementById('filter-input');
 
 const taskManager = new TaskManager();
+let oldTimeoutID = 0;
+let nb_thread = 0;
 
 function addEventListeners() {
     // SELECT TYPE LISTENER
@@ -48,6 +51,21 @@ function addEventListeners() {
     });
     // ADD TASK BUTTON LISTENER
     addTaskButton.addEventListener('click', (event) => addTask(event));
+    // FILTER INPUT LISTENER
+    filterInput.addEventListener('input', (event) => {
+        if (oldTimeoutID){
+            console.log("Clearing old timeout ID: ", oldTimeoutID);
+            clearTimeout(oldTimeoutID);
+            // nb_thread--;
+            // console.log("Thread count after clearing: ", nb_thread);
+        }
+        oldTimeoutID = setTimeout(() => {
+            // nb_thread++;
+            // console.log("New thread started: ", nb_thread);
+            applyFilter(event);
+        }, 2000);
+    });
+
 }
 
 function clearInputs() {
@@ -55,6 +73,10 @@ function clearInputs() {
     taskTextInput.value = '';
     taskLocationInput.value = '';
     taskProjectInput.value = '';
+}
+
+function clearDisplayTasksTable() {
+    while (displayTaskTableBody.firstChild) displayTaskTableBody.removeChild(displayTaskTableBody.firstChild);
 }
 
 function addTask(event){
@@ -69,15 +91,12 @@ function addTask(event){
     switch (taskType) {
         case "1":
             task = new Task(taskTitle.trim(), taskText.trim(), new Date(Date.now()));
-            console.log("SWITCH 1");
             break;
         case "2":
             task = new TaskPersonal(taskTitle.trim(), taskText.trim(), new Date(Date.now()), taskLocation.trim());
-            console.log("SWITCH 2");
             break;
         case "3":
             task = new TaskPro(taskTitle.trim(), taskText.trim(), new Date(Date.now()), taskProject.trim());
-            console.log("SWITCH 3");
             break;
         default:
             console.error("Invalid task type");
@@ -88,16 +107,24 @@ function addTask(event){
     // DEBUG
     taskManager.displayAllTasks();
 
-    displayAllTasks();
+    displayAllTasks(taskManager._tasks);
     clearInputs();
 }
 
-function displayAllTasks() {
+function displayAllTasks(tasks) {
     // Clear the table body
-    while (displayTaskTableBody.firstChild) displayTaskTableBody.removeChild(displayTaskTableBody.firstChild);
+    clearDisplayTasksTable();
     // Rebuild the table with current tasks
-    // if (taskManager._tasks.length === 0)
-    for (let task of taskManager._tasks){
+    if (tasks.length === 0){
+        const row = document.createElement('tr');
+        const emptyTd = document.createElement('td');
+        emptyTd.setAttribute('colspan', '4');
+        emptyTd.textContent = 'No tasks available';
+        row.appendChild(emptyTd);
+        displayTaskTableBody.appendChild(row);
+        return;
+    }
+    for (let task of tasks){
         console.log(task);
         const row = document.createElement('tr');        
         displayTaskTableBody.appendChild(row);
@@ -118,6 +145,25 @@ function displayAllTasks() {
         projectTd.textContent = (task._project == null) ? '' : task._project;
         row.appendChild(projectTd);
     }
+}
+
+function applyFilter(event) {
+    console.log("nb_thread: ", nb_thread);
+    const keyword = event.target.value.toLowerCase();
+    if (keyword == null || keyword === '') {
+        displayAllTasks(taskManager._tasks);
+        return;
+    }
+    // Clear the table body
+    clearDisplayTasksTable();
+    // Filter tasks based on the keyword
+    const filteredTasks = taskManager._tasks.filter(task => {
+        return (task._title != null && task._title.toLowerCase().includes(keyword)) ||
+               (task._text != null && task._text.toLowerCase().includes(keyword)) ||
+               (task._location != null && task._location.toLowerCase().includes(keyword)) ||
+               (task._project != null && task._project.toLowerCase().includes(keyword));
+    });
+    displayAllTasks(filteredTasks);
 }
 
 function main() {
