@@ -56,12 +56,8 @@ function addEventListeners() {
         if (oldTimeoutID){
             console.log("Clearing old timeout ID: ", oldTimeoutID);
             clearTimeout(oldTimeoutID);
-            // nb_thread--;
-            // console.log("Thread count after clearing: ", nb_thread);
         }
         oldTimeoutID = setTimeout(() => {
-            // nb_thread++;
-            // console.log("New thread started: ", nb_thread);
             applyFilter(event);
         }, 2000);
     });
@@ -126,24 +122,8 @@ function displayAllTasks(tasks) {
     }
     for (let task of tasks){
         console.log(task);
-        const row = document.createElement('tr');        
+        const row = task.toTableRow();
         displayTaskTableBody.appendChild(row);
-
-        const titleTd = document.createElement('td');
-        titleTd.textContent = (task._title == null) ? '' : task._title;
-        row.appendChild(titleTd);
-
-        const textTd = document.createElement('td');
-        textTd.textContent = (task._text == null) ? '' : task._text;
-        row.appendChild(textTd);
-
-        const locationTd = document.createElement('td');
-        locationTd.textContent = (task._location == null) ? '' : task._location;
-        row.appendChild(locationTd);
-
-        const projectTd = document.createElement('td');
-        projectTd.textContent = (task._project == null) ? '' : task._project;
-        row.appendChild(projectTd);
     }
 }
 
