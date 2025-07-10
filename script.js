@@ -6,6 +6,7 @@ import { TaskManager } from './modules/taskManager.js';
 const taskTypeSelect = document.getElementById('taskTypeSelect');
 const taskTitleInput = document.getElementById('taskTitleInput');
 const taskTextInput = document.getElementById('taskTextInput');
+const taskDateInput = document.getElementById('taskDateInput');
 const taskLocationInputContainer = document.getElementById('taskLocationInputContainer');
 const taskLocationInput = document.getElementById('taskLocationInput');
 const taskProjectInputContainer = document.getElementById('taskProjectInputContainer');
@@ -13,6 +14,8 @@ const taskProjectInput = document.getElementById('taskProjectInput');
 const addTaskButton = document.getElementById('addTaskButton');
 const displayTaskTableBody = document.getElementById('displayTaskTableBody');
 const filterInput = document.getElementById('filter-input');
+const startDateFilterInput = document.getElementById('filter-startDate');
+const endDateFilterInput = document.getElementById('filter-endDate');
 
 const taskManager = new TaskManager();
 let oldTimeoutID = 0;
@@ -51,8 +54,29 @@ function addEventListeners() {
     });
     // ADD TASK BUTTON LISTENER
     addTaskButton.addEventListener('click', (event) => addTask(event));
+
     // FILTER INPUT LISTENER
     filterInput.addEventListener('input', (event) => {
+        if (oldTimeoutID){
+            console.log("Clearing old timeout ID: ", oldTimeoutID);
+            clearTimeout(oldTimeoutID);
+        }
+        oldTimeoutID = setTimeout(() => {
+            applyFilter(event);
+        }, 2000);
+    });
+
+    startDateFilterInput.addEventListener('input', (event) => {
+        if (oldTimeoutID){
+            console.log("Clearing old timeout ID: ", oldTimeoutID);
+            clearTimeout(oldTimeoutID);
+        }
+        oldTimeoutID = setTimeout(() => {
+            applyFilter(event);
+        }, 2000);
+    });
+
+    endDateFilterInput.addEventListener('input', (event) => {
         if (oldTimeoutID){
             console.log("Clearing old timeout ID: ", oldTimeoutID);
             clearTimeout(oldTimeoutID);
@@ -67,6 +91,7 @@ function addEventListeners() {
 function clearInputs() {
     taskTitleInput.value = '';
     taskTextInput.value = '';
+    taskDateInput.value = '';
     taskLocationInput.value = '';
     taskProjectInput.value = '';
 }
@@ -80,19 +105,20 @@ function addTask(event){
     const taskType = taskTypeSelect.value;
     const taskTitle = taskTitleInput.value;
     const taskText = taskTextInput.value;
+    const taskDate = taskDateInput.value;
     const taskLocation = taskLocationInput.value;
     const taskProject = taskProjectInput.value;
 
     let task;
     switch (taskType) {
         case "1":
-            task = new Task(taskTitle.trim(), taskText.trim(), new Date(Date.now()));
+            task = new Task(taskTitle.trim(), taskText.trim(), new Date(taskDate.trim()));
             break;
         case "2":
-            task = new TaskPersonal(taskTitle.trim(), taskText.trim(), new Date(Date.now()), taskLocation.trim());
+            task = new TaskPersonal(taskTitle.trim(), taskText.trim(), new Date(taskDate.trim()), taskLocation.trim());
             break;
         case "3":
-            task = new TaskPro(taskTitle.trim(), taskText.trim(), new Date(Date.now()), taskProject.trim());
+            task = new TaskPro(taskTitle.trim(), taskText.trim(), new Date(taskDate.trim()), taskProject.trim());
             break;
         default:
             console.error("Invalid task type");
@@ -114,7 +140,7 @@ function displayAllTasks(tasks) {
     if (tasks.length === 0){
         const row = document.createElement('tr');
         const emptyTd = document.createElement('td');
-        emptyTd.setAttribute('colspan', '4');
+        emptyTd.setAttribute('colspan', '5');
         emptyTd.textContent = 'No tasks available';
         row.appendChild(emptyTd);
         displayTaskTableBody.appendChild(row);
@@ -129,20 +155,39 @@ function displayAllTasks(tasks) {
 
 function applyFilter(event) {
     console.log("nb_thread: ", nb_thread);
-    const keyword = event.target.value.toLowerCase();
-    if (keyword == null || keyword === '') {
+    const keyword = filterInput.value.toLowerCase();
+    const startDate = startDateFilterInput.value;
+    const endDate = endDateFilterInput.value;
+    let filteredTasks = taskManager._tasks;
+    console.log("Applying filter with keyword: ", keyword, "Start Date: ", startDate, "End Date: ", endDate);
+
+    if ((keyword == null || keyword.trim() === '')
+        && (startDate == null || startDate.trim() === '')
+        && (endDate == null || endDate.trim() === '')) {
         displayAllTasks(taskManager._tasks);
         return;
     }
     // Clear the table body
     clearDisplayTasksTable();
     // Filter tasks based on the keyword
-    const filteredTasks = taskManager._tasks.filter(task => {
-        return (task._title != null && task._title.toLowerCase().includes(keyword)) ||
-               (task._text != null && task._text.toLowerCase().includes(keyword)) ||
-               (task._location != null && task._location.toLowerCase().includes(keyword)) ||
-               (task._project != null && task._project.toLowerCase().includes(keyword));
-    });
+    if (keyword && keyword.trim() !== '') {
+        filteredTasks = filteredTasks.filter(task => {
+            return (task._title != null && task._title.toLowerCase().includes(keyword)) ||
+                   (task._text != null && task._text.toLowerCase().includes(keyword)) ||
+                   (task._location != null && task._location.toLowerCase().includes(keyword)) ||
+                   (task._project != null && task._project.toLowerCase().includes(keyword));
+        });
+    }
+
+    // Filter tasks based on the date range
+    if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        if (start > end) return console.error("Start date cannot be after end date");
+
+        filteredTasks = filteredTasks.filter(task => task.isBetween(start, end));
+        filteredTasks.filter(task => console.log(task.isBetween(start, end)));
+    }
     displayAllTasks(filteredTasks);
 }
 

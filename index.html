@@ -42,6 +42,11 @@
                                             <textarea class="form-control bg-secondary text-white" placeholder="Task Text" id="taskTextInput" style="height: 200px" required></textarea>
                                         </div>
                                         
+                                        <div class="form mb-3">
+                                            <label for="taskDateInput" class="bg-dark text-white">Task Date</label>
+                                            <input type="date" class="form-control bg-secondary text-white" id="taskDateInput" required>
+                                        </div>
+
                                         <div class="form mb-3" id="taskLocationInputContainer">
                                             <label for="taskLocationInput" class="bg-dark text-white">Task Location</label>
                                             <input type="text" class="form-control bg-secondary text-white" id="taskLocationInput" placeholder="Task Location" required>
@@ -68,10 +73,14 @@
                             </h2>
                             <div id="collapseDisplayTasks" class="accordion-collapse collapse show" data-bs-parent="#taskDisplayAccordion">
                                 <div class="accordion-body bg-dark text-white">
+                                    <!-- FILTER -->
                                     <div class="input-group mb-3 filter-container">
                                         <input type="search" class="form-control bg-secondary text-white" id="filter-input" placeholder="keyword" aria-label="keyword" aria-describedby="filter-button">
+                                        <input type="date" class="form-control bg-secondary text-white" id="filter-startDate" placeholder="Start Date" aria-label="Start Date" aria-describedby="filter-button">
+                                        <input type="date" class="form-control bg-secondary text-white" id="filter-endDate" placeholder="End Date" aria-label="End Date" aria-describedby="filter-button">
                                         <span class="input-group-text bg-secondary text-white" id="filter-button">Filter</span>
                                     </div>
+                                    <!-- TASK TABLE -->
                                     <table class="table table-dark table-striped table-bordered border-secondary">
                                         <thead>
                                             <tr>
