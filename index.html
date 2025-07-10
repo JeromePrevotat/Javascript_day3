@@ -34,27 +34,32 @@
 
                                         <div class="form mb-3">
                                             <label for="taskTitleInput" class="bg-dark text-white">Task Title</label>
-                                            <input type="text" class="form-control bg-secondary text-white" id="taskTitleInput" placeholder="Task Title" required>
+                                            <input type="text" class="form-control bg-secondary text-white mb-3" id="taskTitleInput" placeholder="Task Title" required>
+                                            <label for="taskTitleInput" id="taskTitleInputError" class="alert alert-danger d-none">Task Title is required</label>
                                         </div>
                                         
                                         <div class="form mb-3">
                                             <label for="taskTextInput" class="bg-dark text-white">Task Text</label>
-                                            <textarea class="form-control bg-secondary text-white" placeholder="Task Text" id="taskTextInput" style="height: 200px" required></textarea>
+                                            <textarea class="form-control bg-secondary text-white mb-3" placeholder="Task Text" id="taskTextInput" style="height: 200px" required></textarea>
+                                            <label for="taskTextInput" id="taskTextInputError" class="alert alert-danger d-none">Task Text is required</label>
                                         </div>
                                         
                                         <div class="form mb-3">
                                             <label for="taskDateInput" class="bg-dark text-white">Task Date</label>
-                                            <input type="date" class="form-control bg-secondary text-white" id="taskDateInput" required>
+                                            <input type="date" class="form-control bg-secondary text-white mb-3" id="taskDateInput" required>
+                                            <label for="taskDateInput" id="taskDateInputError" class="alert alert-danger d-none">Task Date is required</label>
                                         </div>
 
                                         <div class="form mb-3" id="taskLocationInputContainer">
                                             <label for="taskLocationInput" class="bg-dark text-white">Task Location</label>
-                                            <input type="text" class="form-control bg-secondary text-white" id="taskLocationInput" placeholder="Task Location" required>
+                                            <input type="text" class="form-control bg-secondary text-white mb-3" id="taskLocationInput" placeholder="Task Location" required>
+                                            <label for="taskLocationInput" id="taskLocationInputError" class="alert alert-danger d-none">Task Location is required</label>
                                         </div>
                                         
                                         <div class="form mb-3" id="taskProjectInputContainer">
                                             <label for="taskProjectInput" class="bg-dark text-white">Task Project</label>
-                                            <input type="text" class="form-control bg-secondary text-white" id="taskProjectInput" placeholder="Task Project" required>
+                                            <input type="text" class="form-control bg-secondary text-white mb-3" id="taskProjectInput" placeholder="Task Project" required>
+                                            <label for="taskProjectInput" id="taskProjectInputError" class="alert alert-danger d-none">Task Project is required</label>
                                         </div>
 
                                         <button type="submit" class="btn btn-secondary" id="addTaskButton">Add Task</button>

@@ -100,6 +100,40 @@ function clearDisplayTasksTable() {
     while (displayTaskTableBody.firstChild) displayTaskTableBody.removeChild(displayTaskTableBody.firstChild);
 }
 
+function validateTaskCreationInputs() {
+    let isValid = true;
+
+    // Clear previous error messages
+    document.querySelectorAll('.alert-danger').forEach(errorLabel => errorLabel.classList.add('d-none'));
+
+    if (taskTitleInput.value == null || taskTitleInput.value.trim() === '') {
+        document.getElementById('taskTitleInputError').classList.remove('d-none');
+        isValid = false;
+    }
+
+    if (taskTextInput.value == null || taskTextInput.value.trim() === '') {
+        document.getElementById('taskTextInputError').classList.remove('d-none');
+        isValid = false;
+    }
+
+    if (taskDateInput.value == null || taskDateInput.value.trim() === '') {
+        document.getElementById('taskDateInputError').classList.remove('d-none');
+        isValid = false;
+    }
+
+    if (taskLocationInput.value == null || taskLocationInput.value.trim() === '') {
+        document.getElementById('taskLocationInputError').classList.remove('d-none');
+        isValid = false;
+    }
+
+    if (taskProjectInput.value == null || taskProjectInput.value.trim() === '') {
+        document.getElementById('taskProjectInputError').classList.remove('d-none');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
 function addTask(event){
     event.preventDefault();
     const taskType = taskTypeSelect.value;
@@ -110,6 +144,9 @@ function addTask(event){
     const taskProject = taskProjectInput.value;
 
     let task;
+    // Validate inputs before creating a task
+    if (!validateTaskCreationInputs()) return;
+
     switch (taskType) {
         case "1":
             task = new Task(taskTitle.trim(), taskText.trim(), new Date(taskDate.trim()));
